@@ -1,3 +1,5 @@
+ậyvâyâyva
+
 # Báo Cáo Cá Nhân — Lab 7: Embedding & Vector Store
 
 **Họ tên:** Lương Trung Chiến
@@ -76,8 +78,10 @@
 ## 2. Hướng tiếp cận của tôi (My Approach) — Cá nhân (10 điểm)
 
 Giải thích cách tiếp cận của bạn khi lập trình (implement) các phần chính trong gói `src`.
-> 1. ```Trước hết chia nhỏ văn bản bằng hai phương pháp phù hợp với nội dung — tách theo câu để giữ từng câu có nghĩa hoặc tách theo các separator tự nhiên như đoạn mới, dấu chấm, khoảng trắng khi cần chia theo cấu trúc lớn hơn.```
-> 2. ```Sau đó mỗi document được nạp vào store dưới dạng record gồm id, content, metadata và embedding của nội dung đó; khi tìm kiếm mình nhúng truy vấn và so sánh với embedding của các record bằng cosine similarity để lấy top-k kết quả có hướng vector giống nhất; nếu cần lọc theo điều kiện bổ sung thì áp metadata filter trước, chỉ tính tương đồng trên tập con phù hợp; cuối cùng mình tạo prompt RAG bằng cách ghép các chunk ngữ cảnh liên quan vào phần context rồi gọi LLM để sinh câu trả lời, nhằm đảm bảo model trả lời dựa trên thông tin đã được truy xuất.```
+
+> 1. ``Trước hết chia nhỏ văn bản bằng hai phương pháp phù hợp với nội dung — tách theo câu để giữ từng câu có nghĩa hoặc tách theo các separator tự nhiên như đoạn mới, dấu chấm, khoảng trắng khi cần chia theo cấu trúc lớn hơn.``
+> 2. ``Sau đó mỗi document được nạp vào store dưới dạng record gồm id, content, metadata và embedding của nội dung đó; khi tìm kiếm mình nhúng truy vấn và so sánh với embedding của các record bằng cosine similarity để lấy top-k kết quả có hướng vector giống nhất; nếu cần lọc theo điều kiện bổ sung thì áp metadata filter trước, chỉ tính tương đồng trên tập con phù hợp; cuối cùng mình tạo prompt RAG bằng cách ghép các chunk ngữ cảnh liên quan vào phần context rồi gọi LLM để sinh câu trả lời, nhằm đảm bảo model trả lời dựa trên thông tin đã được truy xuất.``
+
 ### Các hàm chia nhỏ (Chunking Functions)
 
 **`SentenceChunker.chunk`** — hướng tiếp cận:
@@ -124,7 +128,7 @@ platform win32 -- Python 3.11.9, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\PC ACER\
 cachedir: .pytest_cache
 rootdir: C:\Users\PC ACER\OneDrive\Desktop\Day07_2A202601391_LuongTrungChien
 plugins: anyio-4.14.2
-collected 42 items                                                                                    
+collected 42 items
 
 tests/test_solution.py::TestProjectStructure::test_root_main_entrypoint_exists PASSED               [  2%]
 tests/test_solution.py::TestProjectStructure::test_src_package_exists PASSED                        [  4%]
@@ -178,37 +182,39 @@ tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_tr
 
 ## 4. Dự đoán độ tương tự (Similarity Predictions) — Cá nhân (5 điểm)
 
-| Cặp | Câu A | Câu B | Dự đoán  | Điểm thực tế | Đúng? |
-| ---- | ------ | ------ | ----------- | ---------------- | ------- |
-| 1    | Tôi đi học bằng xe đạp       |  Sáng nay tôi đạp xe đến trường.      |         cao  |        0.0940          |    Đúng     |
-| 2    |   Tôi đăng ký học phần online vào tuần sau     |   Tuần tới tôi sẽ đăng kí học trực tuyến     | cao  |         0.0780         |  Đúng       |
-| 3    |  Học bổng giành cho sinh viên giỏi      |   Tối nay tôi đi xem phim cùng bạn     |  thấp |       0.0079           |   Đúng      |
-| 4    | Quy định kí trúc xá yêu cầu nộp phí trước       |     Bài tập lập trình phải nộp qua hệ thống LMS   |  thấp |     0.0435             |   Đúng      |
-| 5    |  Chương trình học bổng hỗ trợ sinh viên khó khăn      | Các suất học bổng được cấp cho sinh viên có hoàn cảnh khó.       | Cao  |         -0.1263         |     Sai    |
+| Cặp | Câu A                                                    | Câu B                                                                  | Dự đoán | Điểm thực tế | Đúng? |
+| ---- | --------------------------------------------------------- | ----------------------------------------------------------------------- | ---------- | ---------------- | ------- |
+| 1    | Tôi đi học bằng xe đạp                              | Sáng nay tôi đạp xe đến trường.                                 | cao        | 0.0940           | Đúng  |
+| 2    | Tôi đăng ký học phần online vào tuần sau          | Tuần tới tôi sẽ đăng kí học trực tuyến                        | cao        | 0.0780           | Đúng  |
+| 3    | Học bổng giành cho sinh viên giỏi                    | Tối nay tôi đi xem phim cùng bạn                                   | thấp      | 0.0079           | Đúng  |
+| 4    | Quy định kí trúc xá yêu cầu nộp phí trước      | Bài tập lập trình phải nộp qua hệ thống LMS                     | thấp      | 0.0435           | Đúng  |
+| 5    | Chương trình học bổng hỗ trợ sinh viên khó khăn | Các suất học bổng được cấp cho sinh viên có hoàn cảnh khó. | Cao        | -0.1263          | Sai     |
 
 **Kết quả nào bất ngờ nhất? Điều này nói gì về cách embeddings biểu diễn ý nghĩa?**
 
-> ```Kết quả bất ngờ nhất là cặp 5: hai câu về học bổng và hoàn cảnh khó khăn lẽ ra có ý nghĩa gần nhau, nhưng điểm cosine lại âm. Điều này cho thấy embeddings không chỉ dựa vào một vài từ giống nhau mà còn phụ thuộc vào cách mô hình mã hoá toàn bộ ngữ cảnh; với mock/embedder đơn giản, đôi khi những câu có ý nghĩa gần nhau vẫn không được biểu diễn thật sự tương đồng.```
+> ``Kết quả bất ngờ nhất là cặp 5: hai câu về học bổng và hoàn cảnh khó khăn lẽ ra có ý nghĩa gần nhau, nhưng điểm cosine lại âm. Điều này cho thấy embeddings không chỉ dựa vào một vài từ giống nhau mà còn phụ thuộc vào cách mô hình mã hoá toàn bộ ngữ cảnh; với mock/embedder đơn giản, đôi khi những câu có ý nghĩa gần nhau vẫn không được biểu diễn thật sự tương đồng.``
 
 ---
 
 ## 5. Kết quả truy xuất của tôi (Competition Results) — Cá nhân (10 điểm)
 
-Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân của bạn trong gói `src`. **5 câu hỏi này phải trùng với các thành viên cùng nhóm** (xem `REPORT_NHOM.md`).
+Chạy 5 câu hỏi đánh giá chung của nhóm với `FixedSizeChunker(chunk_size=400, overlap=80)`, mô hình `paraphrase-multilingual-MiniLM-L12-v2` và `top_k=3`. Với câu 5, thử thêm bộ lọc `category=double-major`.
 
 | # | Câu hỏi (Query) | Top-1 Chunk truy xuất được (tóm tắt) | Điểm Score | Có liên quan không? (Relevant) | Câu trả lời của Agent (tóm tắt) |
 | - | ----------------- | ------------------------------------------ | ------------ | --------------------------------- | ------------------------------------- |
-| 1 |                   |                                            |              |                                   |                                       |
-| 2 |                   |                                            |              |                                   |                                       |
-| 3 |                   |                                            |              |                                   |                                       |
-| 4 |                   |                                            |              |                                   |                                       |
-| 5 |                   |                                            |              |                                   |                                       |
+| 1 | Rút môn học thì nhận điểm gì và có phải đóng học phí cho môn đó không? | `course-withdrawal`: điều kiện rút môn, điểm R và nghĩa vụ học phí. | 0,6414 | Có — top-1 | Nhận điểm R (điểm 17); môn rút không tính vào bảng điểm nhưng vẫn phải nộp đủ học phí. |
+| 2 | Hạn chót nộp 100% học phí học kỳ 1 và học kỳ 2 là khi nào? | `course-registration`: nội dung về chuẩn và trình độ năm học, không chứa thời hạn nộp học phí. | 0,6110 | Không — chunk đúng không có trong top-3 | Không trả lời đúng được hạn chót từ ngữ cảnh truy xuất; đáp án chuẩn là kết thúc tuần 4 của học kỳ. |
+| 3 | Các học phần tốt nghiệp được xếp loại ĐẠT khi đạt mức điểm nào? | `conduct-grading`: quy định điểm đạt của học phần tốt nghiệp. | 0,8231 | Có — top-1 | Phải đạt từ mức C trở lên, tương đương từ 5,5 theo thang điểm 10. |
+| 4 | Sinh viên được kéo dài thời gian đào tạo tối đa bao nhiêu học kỳ? | `extended-study-duration`: giới hạn kéo dài thời gian đào tạo. | 0,8239 | Có — top-1 | Tối đa 1 học kỳ chính với sinh viên chính quy và 2 học kỳ chính với sinh viên vừa làm vừa học; chỉ xét một lần. |
+| 5 | Muốn học ngành thứ hai thì nộp đơn ở đâu và cần điều kiện gì trước đó? | `double-major`: nơi nộp đơn và quy định đào tạo song ngành. | 0,5685 | Có — top-1; lọc metadata vẫn giữ đúng top-1 | Hoàn thành học phần tốt nghiệp ngành thứ nhất, có xác nhận của Trưởng Khoa ngành thứ hai rồi nộp tại Phòng Đào tạo. |
 
-**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** __ / 5
+**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** **4 / 5**
+
+**Điểm truy xuất theo thang đánh giá:** **8 / 10**.
 
 **Điều hay nhất tôi học được từ thành viên khác / nhóm khác (qua demo):**
 
-> *Viết 2-3 câu:*
+> Từ chiến lược `SectionChunker` của Nguyễn Phương Nam, tôi thấy bám theo ranh giới mục FAQ có thể đạt cùng chất lượng truy xuất với ít chunk hơn `FixedSizeChunker`. Tuy nhiên, cả hai cùng thất bại ở câu hỏi học phí, cho thấy chuẩn hóa cách viết “HK1/HK2” và cải thiện truy vấn có thể quan trọng hơn việc chỉ thay kích thước chunk.
 
 ---
 
@@ -220,5 +226,5 @@ Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân củ
 | Hướng tiếp cận của tôi (My Approach)           | 10 / 10                |
 | Hoàn thiện code (Core Implementation — tests)     | 30 / 30                |
 | Dự đoán độ tương tự (Similarity Predictions) | 5 / 5                  |
-| Kết quả truy xuất của tôi (Competition Results) | 10 / 10                |
-| **Tổng phần cá nhân**                      | **60/ 60**         |
+| Kết quả truy xuất của tôi (Competition Results) | 8 / 10                |
+| **Tổng phần cá nhân**                      | **58 / 60**       |

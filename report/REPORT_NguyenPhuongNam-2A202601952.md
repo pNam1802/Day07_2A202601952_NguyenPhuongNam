@@ -137,37 +137,39 @@ tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_tr
 
 ## 4. Dự đoán độ tương tự (Similarity Predictions) — Cá nhân (5 điểm)
 
-*Phần này sẽ được hoàn thành ở Giai đoạn 2 khi chạy `compute_similarity()` trên dữ liệu thật.*
+Các dự đoán dưới đây được ghi trước khi chạy `compute_similarity()`. Điểm thực tế được tính bằng mô hình `paraphrase-multilingual-MiniLM-L12-v2`; quy ước định tính: các cặp cùng ý/chủ đề có điểm cao hơn rõ rệt so với các cặp khác chủ đề.
 
 | Cặp | Câu A | Câu B | Dự đoán | Điểm thực tế | Đúng? |
 |------|-----------|-----------|---------|--------------|-------|
-| 1 | "Học phí học kỳ cần nộp trước ngày 15" | "Sinh viên phải thanh toán tiền học trước ngày 15" | cao | *(chờ kết quả)* | |
-| 2 | "Thư viện mở cửa từ 7h sáng đến 9h tối" | "Quy trình đăng ký học bổng cần nộp đơn trước tháng 10" | thấp | *(chờ kết quả)* | |
-| 3 | "Đăng ký học phần qua cổng thông tin sinh viên" | "Sinh viên đăng ký môn học trên hệ thống trực tuyến" | cao | *(chờ kết quả)* | |
-| 4 | "Ký túc xá A có phòng đôi và phòng bốn người" | "Học bổng khuyến khích học tập dành cho sinh viên xuất sắc" | thấp | *(chờ kết quả)* | |
-| 5 | "Sinh viên cần photo CCCD khi làm thẻ thư viện" | "Mang theo chứng minh nhân dân để đăng ký thẻ thư viện" | cao | *(chờ kết quả)* | |
+| 1 | "Học phí học kỳ cần nộp trước ngày 15" | "Sinh viên phải thanh toán tiền học trước ngày 15" | cao | 0,7689 | Đúng |
+| 2 | "Thư viện mở cửa từ 7h sáng đến 9h tối" | "Quy trình đăng ký học bổng cần nộp đơn trước tháng 10" | thấp | 0,2259 | Đúng |
+| 3 | "Đăng ký học phần qua cổng thông tin sinh viên" | "Sinh viên đăng ký môn học trên hệ thống trực tuyến" | cao | 0,7347 | Đúng |
+| 4 | "Ký túc xá A có phòng đôi và phòng bốn người" | "Học bổng khuyến khích học tập dành cho sinh viên xuất sắc" | thấp | 0,1526 | Đúng |
+| 5 | "Sinh viên cần photo CCCD khi làm thẻ thư viện" | "Mang theo chứng minh nhân dân để đăng ký thẻ thư viện" | cao | 0,5799 | Đúng |
 
 **Kết quả nào bất ngờ nhất? Điều này nói gì về cách embeddings biểu diễn ý nghĩa?**
-> *(Sẽ điền sau khi chạy thực tế ở Giai đoạn 2)*
+> Cặp 5 bất ngờ nhất: hai câu mô tả gần như cùng một thủ tục nhưng chỉ đạt 0,5799, thấp hơn đáng kể so với hai cặp tương đồng cao còn lại. Nguyên nhân có thể là mô hình chưa ánh xạ hoàn toàn cách viết tắt mới `CCCD` với cụm từ cũ `chứng minh nhân dân`, đồng thời hai động từ “photo” và “mang theo” không hoàn toàn đồng nghĩa. Điều này cho thấy embedding nắm được chủ đề chung nhưng vẫn nhạy với cách diễn đạt và mức độ tương đương thật sự giữa các chi tiết.
 
 ---
 
 ## 5. Kết quả truy xuất của tôi (Competition Results) — Cá nhân (10 điểm)
 
-*Phần này sẽ được hoàn thành ở Giai đoạn 2 sau khi nhóm thống nhất 5 câu hỏi đánh giá và bộ tài liệu.*
+Chạy 5 câu hỏi đánh giá chung của nhóm với `SectionChunker(max_chars=800, min_chars=120)`, mô hình `paraphrase-multilingual-MiniLM-L12-v2` và `top_k=3`. Với câu 5, thử thêm bộ lọc `category=double-major`.
 
 | # | Câu hỏi (Query) | Top-1 Chunk truy xuất được (tóm tắt) | Điểm Score | Có liên quan không? (Relevant) | Câu trả lời của Agent (tóm tắt) |
 |---|-------|--------------------------------|-------|-----------|------------------------|
-| 1 | | | | | |
-| 2 | | | | | |
-| 3 | | | | | |
-| 4 | | | | | |
-| 5 | | | | | |
+| 1 | Rút môn học thì nhận điểm gì và có phải đóng học phí cho môn đó không? | `course-withdrawal`: điều kiện rút môn, nhận điểm R (điểm 17) và vẫn phải nộp đủ học phí. | 0,6414 | Có — top-1 | Nhận điểm R (điểm 17); môn rút không tính vào bảng điểm nhưng vẫn phải nộp đủ học phí. |
+| 2 | Hạn chót nộp 100% học phí học kỳ 1 và học kỳ 2 là khi nào? | `conduct-grading`: mục “Điểm đạt của các học phần tốt nghiệp”, không chứa thời hạn nộp học phí. | 0,5698 | Không — chunk đúng không có trong top-3 | Không trả lời đúng được hạn chót vì ngữ cảnh truy xuất không chứa mục “Thời gian nộp học phí”; đáp án chuẩn là kết thúc tuần 4 của học kỳ. |
+| 3 | Các học phần tốt nghiệp được xếp loại ĐẠT khi đạt mức điểm nào? | `conduct-grading`: mục “Điểm đạt của các học phần tốt nghiệp”. | 0,7701 | Có — top-1 | Phải đạt từ mức C trở lên, tương đương từ 5,5 theo thang điểm 10. |
+| 4 | Sinh viên được kéo dài thời gian đào tạo tối đa bao nhiêu học kỳ? | `extended-study-duration`: các trường hợp và giới hạn kéo dài thời gian đào tạo. | 0,7430 | Có — top-1 | Tối đa 1 học kỳ chính với sinh viên chính quy và 2 học kỳ chính với sinh viên vừa làm vừa học; chỉ xét một lần. |
+| 5 | Muốn học ngành thứ hai thì nộp đơn ở đâu và cần điều kiện gì trước đó? | `double-major`: mục “Quy trình” đào tạo song ngành. | 0,4899 | Có — top-1; lọc metadata vẫn giữ đúng top-1 | Hoàn thành học phần tốt nghiệp ngành thứ nhất, xin xác nhận của Trưởng Khoa quản lý ngành thứ hai rồi nộp đơn tại Phòng Đào tạo. |
 
-**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** __ / 5
+**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** **4 / 5**
+
+**Điểm truy xuất theo thang đánh giá:** **8 / 10** (câu 1, 3, 4 và 5 đạt 2/2; câu 2 đạt 0/2).
 
 **Điều hay nhất tôi học được từ thành viên khác / nhóm khác (qua demo):**
-> *(Sẽ điền sau buổi thảo luận nhóm)*
+> Điều đáng chú ý nhất là các chiến lược rất khác nhau về số lượng và độ dài chunk nhưng kết quả chỉ chênh nhau 1 điểm; chất lượng dữ liệu và cách diễn đạt truy vấn có ảnh hưởng lớn hơn việc chỉ tinh chỉnh kích thước chunk. Từ thử nghiệm của Nguyễn Cao Nam, tôi cũng thấy lọc theo `category` là một lưới an toàn hữu ích: nó đưa chunk `double-major` từ hạng 3 lên hạng 1 với `RecursiveChunker`, trong khi các metadata đồng nhất như `audience` hay `language` không giúp thu hẹp kết quả.
 
 ---
 
@@ -178,6 +180,6 @@ tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_tr
 | Khởi động (Warm-up) | 5 / 5 |
 | Hướng tiếp cận của tôi (My Approach) | 10 / 10 |
 | Hoàn thiện code (Core Implementation — tests) | 30 / 30 |
-| Dự đoán độ tương tự (Similarity Predictions) | *(chờ Giai đoạn 2)* / 5 |
-| Kết quả truy xuất của tôi (Competition Results) | *(chờ Giai đoạn 2)* / 10 |
-| **Tổng phần cá nhân** | **45+ / 60** |
+| Dự đoán độ tương tự (Similarity Predictions) | 5 / 5 |
+| Kết quả truy xuất của tôi (Competition Results) | 8 / 10 |
+| **Tổng phần cá nhân** | **58 / 60** |

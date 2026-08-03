@@ -121,21 +121,23 @@ tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_tr
 
 ## 5. Kết quả truy xuất của tôi (Competition Results) — Cá nhân (10 điểm)
 
-Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân của bạn trong gói `src`. **5 câu hỏi này phải trùng với các thành viên cùng nhóm** (xem `REPORT_NHOM.md`).
+Chạy 5 câu hỏi đánh giá chung của nhóm với `RecursiveChunker(chunk_size=500)`, mô hình `paraphrase-multilingual-MiniLM-L12-v2` và `top_k=3`. Với câu 5, thử thêm bộ lọc `category=double-major`.
 
 | # | Câu hỏi (Query) | Top-1 Chunk truy xuất được (tóm tắt) | Điểm Score | Có liên quan không? (Relevant) | Câu trả lời của Agent (tóm tắt) |
 |---|-------|--------------------------------|-------|-----------|------------------------|
-| 1 | | | | | |
-| 2 | | | | | |
-| 3 | | | | | |
-| 4 | | | | | |
-| 5 | | | | | |
+| 1 | Rút môn học thì nhận điểm gì và có phải đóng học phí cho môn đó không? | `course-withdrawal`: điều kiện rút môn, điểm R và nghĩa vụ học phí. | 0,6305 | Có — top-1 | Nhận điểm R (điểm 17); môn rút không tính vào bảng điểm nhưng vẫn phải nộp đủ học phí. |
+| 2 | Hạn chót nộp 100% học phí học kỳ 1 và học kỳ 2 là khi nào? | `course-registration`: nội dung học phí môn Giáo dục thể chất, không chứa hạn nộp 100% học phí. | 0,6333 | Không — chunk đúng không có trong top-3 | Không trả lời đúng được hạn chót từ ngữ cảnh truy xuất; đáp án chuẩn là kết thúc tuần 4 của học kỳ. |
+| 3 | Các học phần tốt nghiệp được xếp loại ĐẠT khi đạt mức điểm nào? | `conduct-grading`: kết quả và mức điểm đạt của học phần tốt nghiệp. | 0,8148 | Có — top-1 | Phải đạt từ mức C trở lên, tương đương từ 5,5 theo thang điểm 10. |
+| 4 | Sinh viên được kéo dài thời gian đào tạo tối đa bao nhiêu học kỳ? | `extended-study-duration`: giới hạn kéo dài thời gian đào tạo. | 0,7941 | Có — top-1 | Tối đa 1 học kỳ chính với sinh viên chính quy và 2 học kỳ chính với sinh viên vừa làm vừa học; chỉ xét một lần. |
+| 5 | Muốn học ngành thứ hai thì nộp đơn ở đâu và cần điều kiện gì trước đó? | `course-registration`: quy định tín chỉ và thời gian đào tạo, không phải quy trình học ngành thứ hai. | 0,5904 | Không ở top-1; chunk đúng `double-major` ở hạng 3 (0,5109) | Top-3 vẫn đủ căn cứ trả lời: hoàn thành học phần tốt nghiệp ngành thứ nhất, có xác nhận của Trưởng Khoa ngành thứ hai rồi nộp tại Phòng Đào tạo. Lọc `category=double-major` đưa chunk đúng lên top-1. |
 
-**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** __ / 5
+**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** **4 / 5**
+
+**Điểm truy xuất theo thang đánh giá:** **7 / 10**; nếu áp dụng bộ lọc metadata ở câu 5 thì câu này tăng từ 1/2 lên 2/2.
 
 **Điều hay nhất tôi học được từ thành viên khác / nhóm khác (qua demo):**
 
-> *Viết 2-3 câu:* Qua phần trình bày, tôi nhận thấy chiến lược Chunking theo đoạn văn (RecursiveChunker) với metadata kèm theo (chỉ mục nguồn bài viết) giúp cho câu trả lời của agent không chỉ đúng ngữ cảnh mà còn có thể trích dẫn lại nguồn cực kỳ chuẩn xác so với Fixed Size chunking.
+> Qua so sánh với các thành viên khác, tôi nhận thấy `RecursiveChunker` dễ chia vụn văn bản có nhiều gạch đầu dòng và làm chunk đúng của câu 5 chỉ đứng hạng 3. Lọc theo `category=double-major` đã đưa chunk này lên hạng 1, cho thấy metadata phân biệt tốt có thể bù cho hạn chế của chiến lược chunking.
 
 ---
 
@@ -147,5 +149,5 @@ Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân củ
 | Hướng tiếp cận của tôi (My Approach)           | 10 / 10                |
 | Hoàn thiện code (Core Implementation — tests)     | 30 / 30                |
 | Dự đoán độ tương tự (Similarity Predictions) | 5 / 5                  |
-| Kết quả truy xuất của tôi (Competition Results) | 10 / 10                |
-| **Tổng phần cá nhân**                      | **60 / 60**      |
+| Kết quả truy xuất của tôi (Competition Results) | 7 / 10                |
+| **Tổng phần cá nhân**                      | **57 / 60**      |
