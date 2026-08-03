@@ -1,5 +1,3 @@
-ậyvâyâyva
-
 # Báo Cáo Cá Nhân — Lab 7: Embedding & Vector Store
 
 **Họ tên:** Lương Trung Chiến
@@ -128,7 +126,7 @@ platform win32 -- Python 3.11.9, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\PC ACER\
 cachedir: .pytest_cache
 rootdir: C:\Users\PC ACER\OneDrive\Desktop\Day07_2A202601391_LuongTrungChien
 plugins: anyio-4.14.2
-collected 42 items
+collected 42 items                                                                                
 
 tests/test_solution.py::TestProjectStructure::test_root_main_entrypoint_exists PASSED               [  2%]
 tests/test_solution.py::TestProjectStructure::test_src_package_exists PASSED                        [  4%]
@@ -198,23 +196,21 @@ tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_tr
 
 ## 5. Kết quả truy xuất của tôi (Competition Results) — Cá nhân (10 điểm)
 
-Chạy 5 câu hỏi đánh giá chung của nhóm với `FixedSizeChunker(chunk_size=400, overlap=80)`, mô hình `paraphrase-multilingual-MiniLM-L12-v2` và `top_k=3`. Với câu 5, thử thêm bộ lọc `category=double-major`.
+Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân của bạn trong gói `src`. **5 câu hỏi này phải trùng với các thành viên cùng nhóm** (xem `REPORT_NHOM.md`).
 
-| # | Câu hỏi (Query) | Top-1 Chunk truy xuất được (tóm tắt) | Điểm Score | Có liên quan không? (Relevant) | Câu trả lời của Agent (tóm tắt) |
-| - | ----------------- | ------------------------------------------ | ------------ | --------------------------------- | ------------------------------------- |
-| 1 | Rút môn học thì nhận điểm gì và có phải đóng học phí cho môn đó không? | `course-withdrawal`: điều kiện rút môn, điểm R và nghĩa vụ học phí. | 0,6414 | Có — top-1 | Nhận điểm R (điểm 17); môn rút không tính vào bảng điểm nhưng vẫn phải nộp đủ học phí. |
-| 2 | Hạn chót nộp 100% học phí học kỳ 1 và học kỳ 2 là khi nào? | `course-registration`: nội dung về chuẩn và trình độ năm học, không chứa thời hạn nộp học phí. | 0,6110 | Không — chunk đúng không có trong top-3 | Không trả lời đúng được hạn chót từ ngữ cảnh truy xuất; đáp án chuẩn là kết thúc tuần 4 của học kỳ. |
-| 3 | Các học phần tốt nghiệp được xếp loại ĐẠT khi đạt mức điểm nào? | `conduct-grading`: quy định điểm đạt của học phần tốt nghiệp. | 0,8231 | Có — top-1 | Phải đạt từ mức C trở lên, tương đương từ 5,5 theo thang điểm 10. |
-| 4 | Sinh viên được kéo dài thời gian đào tạo tối đa bao nhiêu học kỳ? | `extended-study-duration`: giới hạn kéo dài thời gian đào tạo. | 0,8239 | Có — top-1 | Tối đa 1 học kỳ chính với sinh viên chính quy và 2 học kỳ chính với sinh viên vừa làm vừa học; chỉ xét một lần. |
-| 5 | Muốn học ngành thứ hai thì nộp đơn ở đâu và cần điều kiện gì trước đó? | `double-major`: nơi nộp đơn và quy định đào tạo song ngành. | 0,5685 | Có — top-1; lọc metadata vẫn giữ đúng top-1 | Hoàn thành học phần tốt nghiệp ngành thứ nhất, có xác nhận của Trưởng Khoa ngành thứ hai rồi nộp tại Phòng Đào tạo. |
+| # | Câu hỏi (Query)                                                                           | Top-1 Chunk truy xuất được (tóm tắt)                                                                            | Điểm Score | Có liên quan không? (Relevant)                  | Câu trả lời của Agent (tóm tắt)                                                                                                                                        |
+| - | ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------ | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1 | Rút môn học thì nhận điểm gì và có phải đóng học phí cho môn đó không?   | `course-withdrawal`: điều kiện rút môn, nhận điểm R (điểm 17) và vẫn phải nộp đủ học phí.         | 0,6414       | Có — top-1                                       | Nhận điểm R (điểm 17); môn rút không tính vào bảng điểm nhưng vẫn phải nộp đủ học phí.                                                                  |
+| 2 | Hạn chót nộp 100% học phí học kỳ 1 và học kỳ 2 là khi nào?                      | `conduct-grading`: mục “Điểm đạt của các học phần tốt nghiệp”, không chứa thời hạn nộp học phí. | 0,5698       | Không — chunk đúng không có trong top-3      | Không trả lời đúng được hạn chót vì ngữ cảnh truy xuất không chứa mục “Thời gian nộp học phí”; đáp án chuẩn là kết thúc tuần 4 của học kỳ. |
+| 3 | Các học phần tốt nghiệp được xếp loại ĐẠT khi đạt mức điểm nào?           | `conduct-grading`: mục “Điểm đạt của các học phần tốt nghiệp”.                                         | 0,7701       | Có — top-1                                       | Phải đạt từ mức C trở lên, tương đương từ 5,5 theo thang điểm 10.                                                                                             |
+| 4 | Sinh viên được kéo dài thời gian đào tạo tối đa bao nhiêu học kỳ?            | `extended-study-duration`: các trường hợp và giới hạn kéo dài thời gian đào tạo.                       | 0,7430       | Có — top-1                                       | Tối đa 1 học kỳ chính với sinh viên chính quy và 2 học kỳ chính với sinh viên vừa làm vừa học; chỉ xét một lần.                                        |
+| 5 | Muốn học ngành thứ hai thì nộp đơn ở đâu và cần điều kiện gì trước đó? | `double-major`: mục “Quy trình” đào tạo song ngành.                                                         | 0,4899       | Có — top-1; lọc metadata vẫn giữ đúng top-1 | Hoàn thành học phần tốt nghiệp ngành thứ nhất, xin xác nhận của Trưởng Khoa quản lý ngành thứ hai rồi nộp đơn tại Phòng Đào tạo.                  |
 
-**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** **4 / 5**
-
-**Điểm truy xuất theo thang đánh giá:** **8 / 10**.
+**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** 4 / 5
 
 **Điều hay nhất tôi học được từ thành viên khác / nhóm khác (qua demo):**
 
-> Từ chiến lược `SectionChunker` của Nguyễn Phương Nam, tôi thấy bám theo ranh giới mục FAQ có thể đạt cùng chất lượng truy xuất với ít chunk hơn `FixedSizeChunker`. Tuy nhiên, cả hai cùng thất bại ở câu hỏi học phí, cho thấy chuẩn hóa cách viết “HK1/HK2” và cải thiện truy vấn có thể quan trọng hơn việc chỉ thay kích thước chunk.
+> Điều đáng chú ý nhất là các chiến lược rất khác nhau về số lượng và độ dài chunk nhưng kết quả chỉ chênh nhau 1 điểm; chất lượng dữ liệu và cách diễn đạt truy vấn có ảnh hưởng lớn hơn việc chỉ tinh chỉnh kích thước chunk. Từ thử nghiệm nhóm, tôi cũng thấy lọc theo `category` là một lưới an toàn hữu ích: nó đưa chunk `double-major` từ hạng 3 lên hạng 1 với `RecursiveChunker`, trong khi các metadata đồng nhất như `audience` hay `language` không giúp thu hẹp kết quả.
 
 ---
 
@@ -226,5 +222,5 @@ Chạy 5 câu hỏi đánh giá chung của nhóm với `FixedSizeChunker(chunk_
 | Hướng tiếp cận của tôi (My Approach)           | 10 / 10                |
 | Hoàn thiện code (Core Implementation — tests)     | 30 / 30                |
 | Dự đoán độ tương tự (Similarity Predictions) | 5 / 5                  |
-| Kết quả truy xuất của tôi (Competition Results) | 8 / 10                |
-| **Tổng phần cá nhân**                      | **58 / 60**       |
+| Kết quả truy xuất của tôi (Competition Results) | 10 / 10                |
+| **Tổng phần cá nhân**                      | **60/ 60**       |
