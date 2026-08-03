@@ -55,7 +55,11 @@ class TextExtractor(HTMLParser):
             return
         if tag == "title":
             self.in_title = True
-        if tag in BLOCK_TAGS:
+        if re.fullmatch(r"h[1-6]", tag):
+            self.parts.append(f"\n{'#' * int(tag[1])} ")
+        elif tag == "li":
+            self.parts.append("\n- ")
+        elif tag in BLOCK_TAGS:
             self.parts.append("\n")
 
     def handle_endtag(self, tag: str) -> None:
@@ -75,6 +79,7 @@ class TextExtractor(HTMLParser):
             return
         if self.in_title:
             self.title_parts.append(data)
+            return
         self.parts.append(data)
 
     def text(self) -> str:
@@ -102,14 +107,16 @@ def yaml_value(value: str) -> str:
 def load_rows(path: Path) -> list[dict[str, str]]:
     with path.open(encoding="utf-8", newline="") as source_file:
         reader = csv.DictReader(source_file)
-        if not reader.fieldnames or "url" not in reader.fieldnames:
-            raise ValueError("Input CSV must have a 'url' column.")
+        if not reader.fieldnames or ("url" not in reader.fieldnames and "source_url" not in reader.fieldnames):
+            raise ValueError("Input CSV must have a 'url' or 'source_url' column.")
         rows = []
         for number, row in enumerate(reader, start=2):
             cleaned = {key.strip(): (value or "").strip() for key, value in row.items() if key}
-            if not cleaned.get("url"):
-                print(f"Skipping row {number}: missing url", file=sys.stderr)
+            url = cleaned.get("url") or cleaned.get("source_url")
+            if not url:
+                print(f"Skipping row {number}: missing url/source_url", file=sys.stderr)
                 continue
+            cleaned["url"] = url
             rows.append(cleaned)
     return rows
 
@@ -133,7 +140,7 @@ def robots_allowed(url: str, user_agent: str) -> bool:
     return True
 
 
-def fetch(url: str, user_agent: str, timeout: float) -> tuple[str, str]:
+def fetch(url: str, user_agent: str, timeout: float) -> tuple[str, str, str]:
     request = Request(url, headers={"User-Agent": user_agent, "Accept": "text/html,text/plain;q=0.9,*/*;q=0.1"})
     with urlopen(request, timeout=timeout) as response:  # noqa: S310 - URL is supplied by the course user.
         content_type = response.headers.get_content_type().lower()
@@ -141,7 +148,7 @@ def fetch(url: str, user_agent: str, timeout: float) -> tuple[str, str]:
             raise ValueError(f"unsupported content type: {content_type}")
         charset = response.headers.get_content_charset() or "utf-8"
         body = response.read().decode(charset, errors="replace")
-        return response.geturl(), body
+        return response.geturl(), body, content_type
 
 
 def extract_content(body: str, content_type: str = "text/html") -> tuple[str, str]:
@@ -150,7 +157,23 @@ def extract_content(body: str, content_type: str = "text/html") -> tuple[str, st
     parser = TextExtractor()
     parser.feed(body)
     parser.close()
-    return parser.page_title(), parser.text()
+    title = parser.page_title()
+    content = clean_page_text(parser.text(), title)
+    return title, content
+
+
+def clean_page_text(content: str, title: str) -> str:
+    """Remove repeated page chrome while preserving source headings and prose."""
+    title_key = " ".join(title.split()).casefold()
+    chrome_lines = {"trung tâm hỗ trợ"}
+    cleaned: list[str] = []
+    for raw_line in content.replace("\u00a0", " ").splitlines():
+        line = " ".join(raw_line.split())
+        comparable = line.lstrip("#- ").strip().casefold()
+        if not line or comparable == title_key or comparable in chrome_lines:
+            continue
+        cleaned.append(line)
+    return "\n\n".join(cleaned).strip()
 
 
 def existing_manifest(path: Path) -> dict[str, dict[str, str]]:
@@ -161,11 +184,15 @@ def existing_manifest(path: Path) -> dict[str, dict[str, str]]:
 
 
 def write_manifest(path: Path, records: dict[str, dict[str, str]]) -> None:
+    extra_fields = sorted(
+        {key for record in records.values() for key in record} - set(MANIFEST_FIELDS)
+    )
+    fieldnames = [*MANIFEST_FIELDS, *extra_fields]
     with path.open("w", encoding="utf-8", newline="") as manifest_file:
-        writer = csv.DictWriter(manifest_file, fieldnames=MANIFEST_FIELDS)
+        writer = csv.DictWriter(manifest_file, fieldnames=fieldnames)
         writer.writeheader()
         for doc_id in sorted(records):
-            writer.writerow({field: records[doc_id].get(field, "") for field in MANIFEST_FIELDS})
+            writer.writerow({field: records[doc_id].get(field, "") for field in fieldnames})
 
 
 def markdown_document(metadata: dict[str, str], content: str) -> str:
@@ -182,8 +209,9 @@ def build_metadata(row: dict[str, str], final_url: str, title: str) -> dict[str,
         "retrieved_at": date.today().isoformat(),
         "document_version": row.get("document_version") or "not-stated",
     }
+    excluded = {"url", "source_url", "file_path", "doc_id", "title", "document_version"}
     for key, value in row.items():
-        if key not in {"url", "doc_id", "title", "document_version", "license_or_permission"} and value and SAFE_METADATA_KEY.match(key):
+        if key not in excluded and value and SAFE_METADATA_KEY.match(key):
             metadata[key] = value
     return metadata
 
@@ -228,8 +256,8 @@ def main() -> int:
         if index:
             time.sleep(args.delay)
         try:
-            final_url, body = fetch(url, args.user_agent, args.timeout)
-            title, content = extract_content(body)
+            final_url, body, content_type = fetch(url, args.user_agent, args.timeout)
+            title, content = extract_content(body, content_type)
             if len(content) < 80:
                 raise ValueError("extracted content is too short; use another source or clean it manually")
             metadata = build_metadata(row, final_url, title)
@@ -238,12 +266,9 @@ def main() -> int:
                 raise FileExistsError(f"{output_path} exists (use --overwrite to replace it)")
             output_path.write_text(markdown_document(metadata, content), encoding="utf-8")
             manifest[metadata["doc_id"]] = {
+                **metadata,
                 "doc_id": metadata["doc_id"],
                 "file_path": str(output_path),
-                "title": metadata["title"],
-                "source_url": metadata["source_url"],
-                "retrieved_at": metadata["retrieved_at"],
-                "document_version": metadata["document_version"],
                 "license_or_permission": row.get("license_or_permission") or "public-source",
             }
             successful += 1

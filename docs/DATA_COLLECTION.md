@@ -26,10 +26,16 @@ Repo có sẵn `scripts/fetch_public_pages.py`. Sao chép `scripts/urls.example.
 
 ```bash
 cp scripts/urls.example.csv data/urls.csv
-python3 scripts/fetch_public_pages.py data/urls.csv --output-dir data/<ten-chu-de>
+python scripts/fetch_public_pages.py data/urls.csv --output-dir data/<ten-chu-de>
 ```
 
 Script chỉ lấy trang HTML/text công khai, kiểm tra `robots.txt`, chờ tối thiểu 1 giây giữa các request và tạo file `.md` cùng `sources.csv`. Không dùng nó cho nội dung cần đăng nhập, CAPTCHA, trang JavaScript động hoặc PDF; khi đó hãy chọn nguồn khác hay chuyển/clean thủ công.
+
+Để tái tạo riêng bộ BKSI từ manifest và giữ mỗi nguồn thành một file, chạy:
+
+```bash
+python scripts/rebuild_hcmut_bksi.py data/hcmut_bksi/sources.csv --output-dir data/hcmut_bksi --overwrite
+```
 
 ## 3. Cấu trúc thư mục
 
