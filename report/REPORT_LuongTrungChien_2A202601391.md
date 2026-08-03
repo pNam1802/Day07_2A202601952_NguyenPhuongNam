@@ -2,7 +2,7 @@
 
 **Họ tên:** Lương Trung Chiến
 **Nhóm:** PenguinsMadagasccar
-**Ngày:** [Ngày nộp]
+**Ngày:** 03/08/2026
 
 > **Nộp 1 bản / sinh viên.** Phần nhóm (lựa chọn tài liệu, thiết kế chiến lược, bộ câu hỏi đánh giá, demo) nộp chung 1 bản trong `REPORT_NHOM.md`. Chi tiết thang điểm: `docs/SCORING.md`.
 
