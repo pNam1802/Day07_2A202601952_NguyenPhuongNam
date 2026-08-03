@@ -1,7 +1,7 @@
 # Báo Cáo Nhóm — Lab 7: Embedding & Vector Store
 
 **Nhóm:** PenguinsMadagascar
-**Thành viên:** Nguyễn Phương Nam (2A202601952), Lương Trung Chiến (2A202601391), Nguyễn Hữu Hoàng Anh (2A202601357), Nguyễn Cao Nam
+**Thành viên:** Nguyễn Phương Nam (2A202601952), Lương Trung Chiến (2A202601391), Nguyễn Hữu Hoàng Anh (2A202601357), Nguyễn Cao Nam (2A202601377))
 **Ngày:** 2026-08-03
 
 > **Nộp 1 bản / nhóm.** Phần cá nhân (hướng tiếp cận, kết quả riêng, dự đoán…) mỗi thành viên nộp riêng trong `REPORT_CANHAN.md`. Chi tiết thang điểm: `docs/SCORING.md`.
@@ -22,21 +22,21 @@
 
 ### Danh sách tài liệu (Data Inventory)
 
-| # | Tên tài liệu | Nguồn (Source URL) | Ngày lấy / Phiên bản | Số ký tự | Metadata đã gán |
-|---|---|---|---|---|---|
-| 1 | Đăng ký môn học - Quy định - Hướng dẫn chung (`course-registration`) | https://mybk.hcmut.edu.vn/bksi/public/vi/blog/dang-ky-mon-hoc-quy-trinh-huong-dan-chung | 2026-08-03 / not-stated | 15.444 | `category=course-registration`, `document_type=student-guidance` |
-| 2 | Đánh giá kết quả học tập (`conduct-grading`) | https://mybk.hcmut.edu.vn/bksi/public/vi/blog/danh-gia-ket-qua-hoc-tap | 2026-08-03 / not-stated | 8.327 | `category=academic-assessment`, `document_type=policy-guidance` |
-| 3 | Học phí (`tuition-fees`) | https://mybk.hcmut.edu.vn/bksi/public/vi/blog/hoc-phi | 2026-08-03 / not-stated | 1.886 | `category=tuition`, `document_type=policy-guidance` |
-| 4 | Rút môn học (`course-withdrawal`) | https://mybk.hcmut.edu.vn/bksi/public/vi/article/56 | 2026-08-03 / not-stated | 1.772 | `category=course-withdrawal`, `document_type=procedure` |
-| 5 | Kéo dài thời gian đào tạo (`extended-study-duration`) | https://mybk.hcmut.edu.vn/bksi/public/vi/blog/keo-dai-thoi-gian-dao-tao | 2026-08-03 / not-stated | 1.333 | `category=study-duration`, `document_type=procedure` |
-| 6 | Đào tạo song ngành (`double-major`) | https://mybk.hcmut.edu.vn/bksi/public/vi/blog/do-tao-song-nganh | 2026-08-03 / not-stated | 859 | `category=double-major`, `document_type=policy-guidance` |
+| # | Tên tài liệu                                                                  | Nguồn (Source URL)                                                                     | Ngày lấy / Phiên bản | Số ký tự | Metadata đã gán                                                   |
+| - | -------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------ | ----------- | -------------------------------------------------------------------- |
+| 1 | Đăng ký môn học - Quy định - Hướng dẫn chung (`course-registration`) | https://mybk.hcmut.edu.vn/bksi/public/vi/blog/dang-ky-mon-hoc-quy-trinh-huong-dan-chung | 2026-08-03 / not-stated  | 15.444      | `category=course-registration`, `document_type=student-guidance` |
+| 2 | Đánh giá kết quả học tập (`conduct-grading`)                            | https://mybk.hcmut.edu.vn/bksi/public/vi/blog/danh-gia-ket-qua-hoc-tap                  | 2026-08-03 / not-stated  | 8.327       | `category=academic-assessment`, `document_type=policy-guidance`  |
+| 3 | Học phí (`tuition-fees`)                                                     | https://mybk.hcmut.edu.vn/bksi/public/vi/blog/hoc-phi                                   | 2026-08-03 / not-stated  | 1.886       | `category=tuition`, `document_type=policy-guidance`              |
+| 4 | Rút môn học (`course-withdrawal`)                                           | https://mybk.hcmut.edu.vn/bksi/public/vi/article/56                                     | 2026-08-03 / not-stated  | 1.772       | `category=course-withdrawal`, `document_type=procedure`          |
+| 5 | Kéo dài thời gian đào tạo (`extended-study-duration`)                    | https://mybk.hcmut.edu.vn/bksi/public/vi/blog/keo-dai-thoi-gian-dao-tao                 | 2026-08-03 / not-stated  | 1.333       | `category=study-duration`, `document_type=procedure`             |
+| 6 | Đào tạo song ngành (`double-major`)                                        | https://mybk.hcmut.edu.vn/bksi/public/vi/blog/do-tao-song-nganh                         | 2026-08-03 / not-stated  | 859         | `category=double-major`, `document_type=policy-guidance`         |
 
 Tổng cộng **29.621 ký tự** trong `data/hcmut_bksi/`. Mọi tài liệu đều mang thêm bốn trường chung: `audience=student`, `department=academic-affairs`, `language=vi`, `license_or_permission=public-page`.
 
 **Danh sách kiểm tra quản trị dữ liệu (Data governance checklist):**
 
-- [x] Tập tài liệu (Corpus) chỉ chứa nguồn công khai/được phép dùng và không chứa dữ liệu cá nhân, thông tin đăng nhập hoặc tài liệu nội bộ.
-- [x] Mỗi tài liệu có `source_url`, `retrieved_at`, `document_version` (hoặc ngày hiệu lực) trong metadata.
+- [X] Tập tài liệu (Corpus) chỉ chứa nguồn công khai/được phép dùng và không chứa dữ liệu cá nhân, thông tin đăng nhập hoặc tài liệu nội bộ.
+- [X] Mỗi tài liệu có `source_url`, `retrieved_at`, `document_version` (hoặc ngày hiệu lực) trong metadata.
 
 Ghi chú thu thập: crawl bằng `scripts/rebuild_hcmut_bksi.py` — kiểm tra `robots.txt`, chờ ≥1 giây giữa các request, chỉ nhận trang HTML/text công khai. Tất cả trang BKSI đều **không công bố ngày hiệu lực**, nên `document_version` ghi `not-stated` đúng theo quy ước ở `docs/DATA_COLLECTION.md`. Đây là một hạn chế thật của bộ dữ liệu: nhóm không kiểm chứng được độ mới của quy định, chỉ biết ngày mình lấy về.
 
@@ -44,17 +44,17 @@ Mỗi trang BKSI kèm khoảng 1.500 ký tự footer giống hệt nhau (menu "T
 
 ### Cấu trúc Metadata (Metadata Schema)
 
-| Trường metadata | Kiểu | Ví dụ giá trị | Tại sao hữu ích cho truy xuất (retrieval)? |
-|---|---|---|---|
-| `doc_id` | string | `tuition-fees` | Khóa ổn định, trùng tên file; dùng cho `delete_document()` và để truy vết chunk về đúng văn bản gốc. |
-| `source_url` | string | `https://mybk.hcmut.edu.vn/.../hoc-phi` | Trích dẫn nguồn kèm câu trả lời, cho phép người đọc tự kiểm chứng. |
-| `retrieved_at` | date | `2026-08-03` | Đánh giá độ mới; quy định học vụ thay đổi theo năm học. |
-| `document_version` | string | `not-stated` | Ghi nhận rõ nguồn không nêu phiên bản, tránh ngộ nhận đây là bản mới nhất. |
-| `category` | enum | `tuition`, `course-withdrawal` | **Trường lọc chính.** Mỗi tài liệu một giá trị riêng nên `search_with_filter()` khoanh được đúng văn bản khi từ khóa xuất hiện ở nhiều nơi. |
-| `document_type` | enum | `procedure`, `policy-guidance`, `student-guidance` | Phân biệt "các bước phải làm" với "quy định/điều kiện" — hai kiểu câu hỏi rất khác nhau của sinh viên. |
-| `audience` | enum | `student` | Bắt buộc theo K3. Hiện cả 6 tài liệu đều `student` nên **không có tác dụng lọc** (xem mục 4). |
-| `department` | string | `academic-affairs` | Cùng lý do: hiện đồng nhất, để dành cho khi mở rộng sang thư viện / ký túc xá. |
-| `language` | enum | `vi` | Chuẩn bị cho corpus song ngữ; hiện đồng nhất. |
+| Trường metadata    | Kiểu  | Ví dụ giá trị                                        | Tại sao hữu ích cho truy xuất (retrieval)?                                                                                                                                |
+| -------------------- | ------ | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `doc_id`           | string | `tuition-fees`                                         | Khóa ổn định, trùng tên file; dùng cho`delete_document()` và để truy vết chunk về đúng văn bản gốc.                                                        |
+| `source_url`       | string | `https://mybk.hcmut.edu.vn/.../hoc-phi`                | Trích dẫn nguồn kèm câu trả lời, cho phép người đọc tự kiểm chứng.                                                                                             |
+| `retrieved_at`     | date   | `2026-08-03`                                           | Đánh giá độ mới; quy định học vụ thay đổi theo năm học.                                                                                                         |
+| `document_version` | string | `not-stated`                                           | Ghi nhận rõ nguồn không nêu phiên bản, tránh ngộ nhận đây là bản mới nhất.                                                                                    |
+| `category`         | enum   | `tuition`, `course-withdrawal`                       | **Trường lọc chính.** Mỗi tài liệu một giá trị riêng nên `search_with_filter()` khoanh được đúng văn bản khi từ khóa xuất hiện ở nhiều nơi. |
+| `document_type`    | enum   | `procedure`, `policy-guidance`, `student-guidance` | Phân biệt "các bước phải làm" với "quy định/điều kiện" — hai kiểu câu hỏi rất khác nhau của sinh viên.                                                   |
+| `audience`         | enum   | `student`                                              | Bắt buộc theo K3. Hiện cả 6 tài liệu đều`student` nên **không có tác dụng lọc** (xem mục 4).                                                           |
+| `department`       | string | `academic-affairs`                                     | Cùng lý do: hiện đồng nhất, để dành cho khi mở rộng sang thư viện / ký túc xá.                                                                                |
+| `language`         | enum   | `vi`                                                   | Chuẩn bị cho corpus song ngữ; hiện đồng nhất.                                                                                                                          |
 
 ---
 
@@ -66,17 +66,17 @@ Mỗi trang BKSI kèm khoảng 1.500 ký tự footer giống hệt nhau (menu "T
 
 Chạy `ChunkingStrategyComparator().compare(text, chunk_size=200)` trên 3 tài liệu đại diện (một dài, một trung bình, một ngắn):
 
-| Tài liệu | Chiến lược (Strategy) | Số lượng Chunk | Độ dài trung bình | Giữ được ngữ cảnh không? |
-|---|---|---|---|---|
-| `course-registration` (15.444 ký tự) | FixedSizeChunker (`fixed_size`) | 78 | 198,0 | Không — cắt giữa câu, nhiều chunk mở đầu bằng nửa từ. |
-| `course-registration` | SentenceChunker (`by_sentences`) | 34 | 451,8 | Khá — trọn câu, nhưng gộp 3 câu thuộc 3 mục khác nhau. |
-| `course-registration` | RecursiveChunker (`recursive`) | 118 | 129,1 | Kém — vỡ vụn nhất, mỗi gạch đầu dòng thành một chunk rời. |
-| `tuition-fees` (1.886 ký tự) | FixedSizeChunker | 10 | 188,6 | Không — tách "kết thúc ở tuần 4" khỏi tiêu đề mục "Thời gian nộp học phí". |
-| `tuition-fees` | SentenceChunker | 6 | 312,2 | Khá. |
-| `tuition-fees` | RecursiveChunker | 14 | 132,9 | Kém. |
-| `double-major` (859 ký tự) | FixedSizeChunker | 5 | 171,8 | Không. |
-| `double-major` | SentenceChunker | 1 | 857,0 | Cả văn bản dồn thành **một** chunk — quá thô. |
-| `double-major` | RecursiveChunker | 5 | 170,4 | Kém. |
+| Tài liệu                               | Chiến lược (Strategy)           | Số lượng Chunk | Độ dài trung bình | Giữ được ngữ cảnh không?                                                            |
+| ---------------------------------------- | ---------------------------------- | ----------------- | --------------------- | ------------------------------------------------------------------------------------------ |
+| `course-registration` (15.444 ký tự) | FixedSizeChunker (`fixed_size`)  | 78                | 198,0                 | Không — cắt giữa câu, nhiều chunk mở đầu bằng nửa từ.                          |
+| `course-registration`                  | SentenceChunker (`by_sentences`) | 34                | 451,8                 | Khá — trọn câu, nhưng gộp 3 câu thuộc 3 mục khác nhau.                           |
+| `course-registration`                  | RecursiveChunker (`recursive`)   | 118               | 129,1                 | Kém — vỡ vụn nhất, mỗi gạch đầu dòng thành một chunk rời.                     |
+| `tuition-fees` (1.886 ký tự)         | FixedSizeChunker                   | 10                | 188,6                 | Không — tách "kết thúc ở tuần 4" khỏi tiêu đề mục "Thời gian nộp học phí". |
+| `tuition-fees`                         | SentenceChunker                    | 6                 | 312,2                 | Khá.                                                                                      |
+| `tuition-fees`                         | RecursiveChunker                   | 14                | 132,9                 | Kém.                                                                                      |
+| `double-major` (859 ký tự)           | FixedSizeChunker                   | 5                 | 171,8                 | Không.                                                                                    |
+| `double-major`                         | SentenceChunker                    | 1                 | 857,0                 | Cả văn bản dồn thành**một** chunk — quá thô.                                |
+| `double-major`                         | RecursiveChunker                   | 5                 | 170,4                 | Kém.                                                                                      |
 
 Toàn corpus: `fixed_size` 151 chunk (avg 196,2) · `by_sentences` 70 chunk (avg 420,7) · `recursive` 215 chunk (avg 136,0).
 
@@ -168,12 +168,12 @@ Kết quả: **81 chunk, avg 363,8** (min 65 / max 500) — giảm được 62% 
 
 ### So Sánh Giữa Các Thành Viên
 
-| Thành viên | Chiến lược (Strategy) | Số chunk / avg | Điểm truy xuất (/10) | Điểm mạnh | Điểm yếu |
-|---|---|---|---|---|---|
-| Nguyễn Phương Nam | `SectionChunker` (custom, `max_chars=800, min_chars=120`) | 60 / 491,9 | **8** | Chunk trùng khớp đơn vị FAQ; giữ điều kiện và ngoại lệ đi cùng nhau. Ít chunk nhất mà vẫn đạt điểm cao nhất. | Phụ thuộc việc nguồn đánh số mục đều đặn; corpus khác định dạng sẽ rơi hết về `RecursiveChunker`. |
-| Lương Trung Chiến | `FixedSizeChunker` (`chunk_size=400, overlap=80`) | 94 / 390,0 | **8** | Độ dài chunk đồng đều nhất (min 84 / max 400), dễ dự đoán chi phí embedding; overlap cứu được câu bị cắt ngang. | Vẫn cắt giữa câu và giữa mục — ranh giới do đếm ký tự quyết định, không theo ngữ nghĩa. |
-| Nguyễn Hữu Hoàng Anh | `SentenceChunker` (`max_sentences_per_chunk=5`) | 43 / 685,5 | **8** | Không bao giờ xé giữa câu; ít chunk nhất nên chi phí embedding thấp nhất. | Chunk dài nhất và lệch nhất (min 246 / max 1.331) — một vector phải "gánh" quá nhiều ý, dễ loãng ngữ nghĩa. |
-| Nguyễn Cao Nam | `RecursiveChunker` (`chunk_size=500`) | 81 / 363,8 | **7** | Tôn trọng ranh giới đoạn/dòng có sẵn; giảm 62% số chunk so với baseline 200. | Chunk ngắn và rời rạc nhất → là chiến lược duy nhất tuột hạng ở câu 5 (xem mục 3). |
+| Thành viên            | Chiến lược (Strategy)                                      | Số chunk / avg | Điểm truy xuất (/10) | Điểm mạnh                                                                                                                        | Điểm yếu                                                                                                                 |
+| ----------------------- | ------------------------------------------------------------- | --------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Nguyễn Phương Nam    | `SectionChunker` (custom, `max_chars=800, min_chars=120`) | 60 / 491,9      | **8**             | Chunk trùng khớp đơn vị FAQ; giữ điều kiện và ngoại lệ đi cùng nhau. Ít chunk nhất mà vẫn đạt điểm cao nhất. | Phụ thuộc việc nguồn đánh số mục đều đặn; corpus khác định dạng sẽ rơi hết về`RecursiveChunker`.      |
+| Lương Trung Chiến    | `FixedSizeChunker` (`chunk_size=400, overlap=80`)         | 94 / 390,0      | **8**             | Độ dài chunk đồng đều nhất (min 84 / max 400), dễ dự đoán chi phí embedding; overlap cứu được câu bị cắt ngang. | Vẫn cắt giữa câu và giữa mục — ranh giới do đếm ký tự quyết định, không theo ngữ nghĩa.                  |
+| Nguyễn Hữu Hoàng Anh | `SentenceChunker` (`max_sentences_per_chunk=5`)           | 43 / 685,5      | **8**             | Không bao giờ xé giữa câu; ít chunk nhất nên chi phí embedding thấp nhất.                                                | Chunk dài nhất và lệch nhất (min 246 / max 1.331) — một vector phải "gánh" quá nhiều ý, dễ loãng ngữ nghĩa. |
+| Nguyễn Cao Nam         | `RecursiveChunker` (`chunk_size=500`)                     | 81 / 363,8      | **7**             | Tôn trọng ranh giới đoạn/dòng có sẵn; giảm 62% số chunk so với baseline 200.                                             | Chunk ngắn và rời rạc nhất → là chiến lược duy nhất tuột hạng ở câu 5 (xem mục 3).                          |
 
 **Chiến lược nào tốt nhất cho chủ đề này? Tại sao?**
 
@@ -189,13 +189,13 @@ Kết quả: **81 chunk, avg 363,8** (min 65 / max 500) — giảm được 62% 
 
 > **Đúng 5 câu hỏi**, đa dạng, có thể kiểm chứng; **ít nhất 1 câu** cần lọc metadata mới trả lời tốt. Đây là bộ câu hỏi chung cho mọi thành viên chạy.
 
-| # | Câu hỏi (Query) | Câu trả lời chuẩn (Gold Answer) | Chunk nào chứa thông tin? |
-|---|---|---|---|
-| 1 | Rút môn học thì nhận điểm gì và có phải đóng học phí cho môn đó không? | Nhận **điểm R (điểm 17)**. Sinh viên vẫn **phải nộp đủ học phí**, kể cả môn nhận điểm R. Môn được rút không tính vào bảng điểm nhưng vẫn tính học phí. | `course-withdrawal`, mục 1 "Điều kiện Rút môn học" |
-| 2 | Hạn chót nộp 100% học phí học kỳ 1 và học kỳ 2 là khi nào? | **Kết thúc ở tuần 4 của học kỳ**, thời gian thanh toán trong 1 tuần; tuần học tính theo biểu đồ năm học. | `tuition-fees`, mục 2 "Thời gian nộp học phí" |
-| 3 | Các học phần tốt nghiệp được xếp loại ĐẠT khi đạt mức điểm nào? | Chỉ được xếp ĐẠT khi có điểm đánh giá **từ mức C trở lên (từ 5,5 theo thang điểm 10)**. Áp dụng cho Thực tập ngoài trường, Đồ án chuyên ngành, Khóa luận tốt nghiệp. | `conduct-grading`, mục 4 "Điểm đạt của các học phần tốt nghiệp" |
-| 4 | Sinh viên được kéo dài thời gian đào tạo tối đa bao nhiêu học kỳ? | Hiệu trưởng xem xét kéo dài **tối đa 01 học kỳ chính** với sinh viên chính quy, **tối đa 02 học kỳ chính** với sinh viên vừa làm vừa học (khóa 2021 về sau); mỗi sinh viên chỉ được xét **không quá một lần**. | `extended-study-duration` |
-| 5 | **(cần lọc metadata)** Muốn học ngành thứ hai thì nộp đơn ở đâu và cần điều kiện gì trước đó? | Phải **hoàn thành học phần tốt nghiệp của ngành thứ nhất**, sau đó nộp đơn tại **PHÒNG ĐÀO TẠO**, đơn có **xác nhận của Trưởng Khoa quản lý ngành thứ 2** (nên tư vấn với Trưởng Khoa trước khi nộp). | `double-major`, mục 1 "Quy trình" |
+| # | Câu hỏi (Query)                                                                                                          | Câu trả lời chuẩn (Gold Answer)                                                                                                                                                                                                                                   | Chunk nào chứa thông tin?                                                 |
+| - | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| 1 | Rút môn học thì nhận điểm gì và có phải đóng học phí cho môn đó không?                                  | Nhận**điểm R (điểm 17)**. Sinh viên vẫn **phải nộp đủ học phí**, kể cả môn nhận điểm R. Môn được rút không tính vào bảng điểm nhưng vẫn tính học phí.                                                                  | `course-withdrawal`, mục 1 "Điều kiện Rút môn học"                  |
+| 2 | Hạn chót nộp 100% học phí học kỳ 1 và học kỳ 2 là khi nào?                                                     | **Kết thúc ở tuần 4 của học kỳ**, thời gian thanh toán trong 1 tuần; tuần học tính theo biểu đồ năm học.                                                                                                                                      | `tuition-fees`, mục 2 "Thời gian nộp học phí"                         |
+| 3 | Các học phần tốt nghiệp được xếp loại ĐẠT khi đạt mức điểm nào?                                          | Chỉ được xếp ĐẠT khi có điểm đánh giá**từ mức C trở lên (từ 5,5 theo thang điểm 10)**. Áp dụng cho Thực tập ngoài trường, Đồ án chuyên ngành, Khóa luận tốt nghiệp.                                                         | `conduct-grading`, mục 4 "Điểm đạt của các học phần tốt nghiệp" |
+| 4 | Sinh viên được kéo dài thời gian đào tạo tối đa bao nhiêu học kỳ?                                           | Hiệu trưởng xem xét kéo dài**tối đa 01 học kỳ chính** với sinh viên chính quy, **tối đa 02 học kỳ chính** với sinh viên vừa làm vừa học (khóa 2021 về sau); mỗi sinh viên chỉ được xét **không quá một lần**. | `extended-study-duration`                                                  |
+| 5 | **(cần lọc metadata)** Muốn học ngành thứ hai thì nộp đơn ở đâu và cần điều kiện gì trước đó? | Phải**hoàn thành học phần tốt nghiệp của ngành thứ nhất**, sau đó nộp đơn tại **PHÒNG ĐÀO TẠO**, đơn có **xác nhận của Trưởng Khoa quản lý ngành thứ 2** (nên tư vấn với Trưởng Khoa trước khi nộp).      | `double-major`, mục 1 "Quy trình"                                        |
 
 **Vì sao câu 5 cần lọc metadata:** cụm "nộp đơn" còn xuất hiện trong `tuition-fees` ("nộp đơn tại P. Công tác Sinh viên" để xin vay/miễn/giảm học phí), còn "học phần tốt nghiệp" lại là chủ đề chính của `conduct-grading`. Truy vấn thuần ngữ nghĩa dễ kéo nhầm hai văn bản đó lên đầu. Gọi `search_with_filter(query, {"category": "double-major"})` khoanh đúng văn bản trước khi xếp hạng.
 
@@ -207,13 +207,13 @@ Bộ câu hỏi phủ 5/6 tài liệu và bốn dạng khác nhau: hệ quả c�
 
 Chạy bằng `python scripts/run_benchmark.py` với `EMBEDDING_PROVIDER=local` (mô hình `paraphrase-multilingual-MiniLM-L12-v2`), `top_k=3`, trên cả bốn chiến lược của nhóm.
 
-| # | Câu hỏi | Chiến lược tốt nhất cho câu này | Có chunk liên quan trong top-3? | Ghi chú |
-|---|---|---|---|---|
-| 1 | Rút môn học nhận điểm gì | Cả 4 (hòa, 2/2) | Có — top-1 đúng ở cả 4 | Từ khóa "rút môn học" là duy nhất trong corpus, không chiến lược nào sai được. |
-| 2 | Hạn nộp 100% học phí | **Không chiến lược nào (0/2 ở cả 4)** | **Không** | Lỗi chung của cả nhóm — phân tích ở mục 4. Chunk đúng chỉ xếp hạng 9 (0,5283) trong khi top-1 sai đạt 0,5698. |
-| 3 | Điểm đạt học phần tốt nghiệp | Cả 4 (hòa, 2/2) | Có — top-1 đúng ở cả 4 | Cụm "học phần tốt nghiệp" xuất hiện nguyên văn trong tài liệu. |
-| 4 | Kéo dài thời gian đào tạo | Cả 4 (hòa, 2/2) | Có — top-1 đúng ở cả 4 | Tên tài liệu trùng gần như nguyên văn với câu hỏi. |
-| 5 | Nộp đơn học ngành thứ hai | `SectionChunker`, `FixedSizeChunker`, `SentenceChunker` (2/2) | Có ở cả 4, nhưng `RecursiveChunker` chỉ đạt hạng 3 (1/2) | **Lọc metadata kéo `RecursiveChunker` từ 1/2 lên 2/2.** |
+| # | Câu hỏi                            | Chiến lược tốt nhất cho câu này                              | Có chunk liên quan trong top-3?                                 | Ghi chú                                                                                                                      |
+| - | ------------------------------------ | ------------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| 1 | Rút môn học nhận điểm gì      | Cả 4 (hòa, 2/2)                                                   | Có — top-1 đúng ở cả 4                                      | Từ khóa "rút môn học" là duy nhất trong corpus, không chiến lược nào sai được.                                 |
+| 2 | Hạn nộp 100% học phí             | **Không chiến lược nào (0/2 ở cả 4)**                  | **Không**                                                  | Lỗi chung của cả nhóm — phân tích ở mục 4. Chunk đúng chỉ xếp hạng 9 (0,5283) trong khi top-1 sai đạt 0,5698. |
+| 3 | Điểm đạt học phần tốt nghiệp | Cả 4 (hòa, 2/2)                                                   | Có — top-1 đúng ở cả 4                                      | Cụm "học phần tốt nghiệp" xuất hiện nguyên văn trong tài liệu.                                                     |
+| 4 | Kéo dài thời gian đào tạo      | Cả 4 (hòa, 2/2)                                                   | Có — top-1 đúng ở cả 4                                      | Tên tài liệu trùng gần như nguyên văn với câu hỏi.                                                                 |
+| 5 | Nộp đơn học ngành thứ hai      | `SectionChunker`, `FixedSizeChunker`, `SentenceChunker` (2/2) | Có ở cả 4, nhưng`RecursiveChunker` chỉ đạt hạng 3 (1/2) | **Lọc metadata kéo `RecursiveChunker` từ 1/2 lên 2/2.**                                                           |
 
 **Tổng điểm:** `SectionChunker` 8/10 · `FixedSizeChunker` 8/10 · `SentenceChunker` 8/10 · `RecursiveChunker` 7/10.
 
@@ -270,12 +270,12 @@ Chạy bằng `python scripts/run_benchmark.py` với `EMBEDDING_PROVIDER=local`
 
 ## Tự Đánh Giá (Phần Nhóm)
 
-| Tiêu chí | Điểm tự đánh giá |
-|---|---|
-| Lựa chọn tài liệu (Document Set Quality) | 10 / 10 |
-| Thiết kế chiến lược (Strategy Design) | 14 / 15 |
-| Chất lượng truy xuất (Retrieval Quality) | 8 / 10 |
-| Thuyết trình (Demo) | 5 / 5 |
-| **Tổng phần nhóm** | **37 / 40** |
+| Tiêu chí                                   | Điểm tự đánh giá |
+| -------------------------------------------- | ---------------------- |
+| Lựa chọn tài liệu (Document Set Quality) | 10 / 10                |
+| Thiết kế chiến lược (Strategy Design)   | 14 / 15                |
+| Chất lượng truy xuất (Retrieval Quality) | 8 / 10                 |
+| Thuyết trình (Demo)                        | 5 / 5                  |
+| **Tổng phần nhóm**                  | **37 / 40**      |
 
 Căn cứ tự chấm: **Lựa chọn tài liệu 10/10** — 6 tài liệu công khai đúng chủ đề K3, đủ 5 trường metadata bắt buộc cộng 4 trường mở rộng, `sources.csv` khớp 1-1, đã cắt boilerplate và ghi rõ hạn chế `document_version: not-stated`. **Thiết kế chiến lược 14/15** — bốn chiến lược thật sự khác nhau kèm lý do bám vào đặc điểm corpus, có một chiến lược custom, và kết luận dựa trên số đo chứ không phỏng đoán; trừ 1 điểm vì các tham số (`max_chars=800`, `chunk_size=400/500`) chọn theo suy luận từ độ dài mục trung bình chứ chưa quét thử nhiều giá trị. **Chất lượng truy xuất 8/10** — đúng theo điểm benchmark đo được của chiến lược tốt nhất; 2 điểm mất ở câu 2 là thật và nhóm đã phân tích nguyên nhân thay vì đổi câu hỏi cho dễ. **Thuyết trình 5/5** — có ba insight ngược trực giác kèm số liệu chứng minh và một phân tích lỗi truy được tới tận nguyên nhân gốc.
