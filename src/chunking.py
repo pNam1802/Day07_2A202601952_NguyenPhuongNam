@@ -148,6 +148,64 @@ class RecursiveChunker:
         return [c for c in chunks if c.strip()]
 
 
+class SectionChunker:
+    """
+    Split text on the numbered-section headings used by the BKSI corpus.
+
+    Lý do thiết kế: mỗi trang BKSI là một FAQ gồm các mục đánh số ("1. Thanh
+    toán học phí", "2. Thời gian nộp học phí"), mỗi mục trả lời trọn một câu
+    hỏi. Cắt đúng ranh giới mục giữ nguyên cặp "tiêu đề mục + điều kiện + ngoại
+    lệ" trong cùng một chunk, thay vì xé giữa câu như cắt theo độ dài cố định.
+
+    Mục dài hơn max_chars được giao lại cho RecursiveChunker để không tạo ra
+    chunk quá lớn làm loãng embedding.
+    """
+
+    # "1. Thanh toán học phí", "2- Quy định", "Bước 1)" hoặc tiêu đề markdown.
+    SECTION_PATTERN = re.compile(r"^(?:#{1,6}\s|\d+\s*[.)-]\s|Bước\s+\d+\s*[.)])", re.M)
+
+    def __init__(self, max_chars: int = 800, min_chars: int = 120) -> None:
+        self.max_chars = max_chars
+        self.min_chars = min_chars
+
+    def chunk(self, text: str) -> list[str]:
+        if not text or not text.strip():
+            return []
+
+        boundaries = [match.start() for match in self.SECTION_PATTERN.finditer(text)]
+        if not boundaries:
+            return RecursiveChunker(chunk_size=self.max_chars).chunk(text)
+
+        # Phần mở đầu trước mục đầu tiên (nếu có) được giữ làm một chunk riêng.
+        starts = ([0] if boundaries[0] > 0 else []) + boundaries
+        sections = [text[a:b].strip() for a, b in zip(starts, starts[1:] + [len(text)])]
+
+        chunks: list[str] = []
+        # Mục quá ngắn (thường chỉ là dòng tiêu đề) được dồn sang mục kế tiếp:
+        # embedding của một chunk 9 ký tự không mang thông tin nào để truy xuất.
+        pending = ""
+        for section in sections:
+            if not section:
+                continue
+            section = f"{pending}\n\n{section}" if pending else section
+            pending = ""
+
+            if len(section) < self.min_chars:
+                pending = section
+            elif len(section) <= self.max_chars:
+                chunks.append(section)
+            else:
+                chunks.extend(RecursiveChunker(chunk_size=self.max_chars).chunk(section))
+
+        if pending:
+            # Mục ngắn cuối cùng không có gì phía sau để gộp: nối vào chunk trước.
+            if chunks:
+                chunks[-1] = f"{chunks[-1]}\n\n{pending}"
+            else:
+                chunks.append(pending)
+        return chunks
+
+
 def _dot(a: list[float], b: list[float]) -> float:
     return sum(x * y for x, y in zip(a, b))
 

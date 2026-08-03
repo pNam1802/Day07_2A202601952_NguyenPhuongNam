@@ -40,9 +40,12 @@ class EmbeddingStore:
     def _make_record(self, doc: Document) -> dict[str, Any]:
         """Build a normalized stored record for one document."""
         embedding = self._embedding_fn(doc.content)
-        # Gắn doc_id vào metadata để phục vụ delete_document và search_with_filter
+        # Gắn doc_id vào metadata để phục vụ delete_document và search_with_filter.
+        # Chunk đi qua ingest.py đã mang sẵn doc_id của TÀI LIỆU gốc, trong khi
+        # doc.id lúc này là id của chunk ("<doc_id>::chunk_3") — ghi đè sẽ khiến
+        # delete_document(doc_id) không khớp chunk nào.
         metadata = dict(doc.metadata)
-        metadata["doc_id"] = doc.id
+        metadata.setdefault("doc_id", doc.id)
         return {
             "id": doc.id,
             "content": doc.content,

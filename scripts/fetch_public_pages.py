@@ -99,8 +99,34 @@ def slugify(value: str) -> str:
     return value.strip("-") or "document"
 
 
+YAML_INDICATORS = "-?:,[]{}#&*!|>'\"%@`"
+YAML_RESERVED_WORDS = {"true", "false", "null", "yes", "no", "on", "off", "~"}
+
+
+def is_plain_yaml_scalar(value: str) -> bool:
+    """Report whether ``value`` can be written unquoted as a YAML plain scalar.
+
+    ``:`` only separates a key when followed by a space or ending the token, and
+    ``#`` only starts a comment when preceded by a space — so URLs stay plain.
+    """
+    if not value or value != value.strip():
+        return False
+    if value[0] in YAML_INDICATORS:
+        return False
+    if ": " in value or value.endswith(":") or " #" in value:
+        return False
+    return value.lower() not in YAML_RESERVED_WORDS
+
+
 def yaml_value(value: str) -> str:
-    """Return one safe, quoted YAML scalar without needing PyYAML."""
+    """Return one YAML scalar, quoted only when plain style would be unsafe.
+
+    Front matter is read back by the naive ``key: value`` parsers in ``ingest.py``
+    and the Giai đoạn 2 checkpoint, which keep surrounding quotes as part of the
+    value. Emitting plain scalars where YAML allows it keeps both readers honest.
+    """
+    if is_plain_yaml_scalar(value):
+        return value
     return '"' + value.replace("\\", "\\\\").replace('"', '\\"') + '"'
 
 
@@ -162,6 +188,17 @@ def extract_content(body: str, content_type: str = "text/html") -> tuple[str, st
     return title, content
 
 
+# Headings that begin the site-wide footer. Everything from the first match on is
+# navigation, tag lists and cookie notices repeated identically on every page, so
+# keeping it would add ~1.5k characters of near-duplicate noise per document.
+TRAILING_CHROME_HEADINGS = (
+    "thông tin phổ biến",
+    "tags",
+    "không tìm thấy câu trả lời? liên hệ bộ phận của chúng tôi",
+    "chính sách cookie",
+)
+
+
 def clean_page_text(content: str, title: str) -> str:
     """Remove repeated page chrome while preserving source headings and prose."""
     title_key = " ".join(title.split()).casefold()
@@ -170,6 +207,8 @@ def clean_page_text(content: str, title: str) -> str:
     for raw_line in content.replace("\u00a0", " ").splitlines():
         line = " ".join(raw_line.split())
         comparable = line.lstrip("#- ").strip().casefold()
+        if comparable in TRAILING_CHROME_HEADINGS:
+            break
         if not line or comparable == title_key or comparable in chrome_lines:
             continue
         cleaned.append(line)
